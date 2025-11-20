@@ -3,17 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Turma;
+use App\Models\turma;
 
-class TurmaController extends Controller
-{
+class TurmaController extends Controller{
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $turmas = Turma::with(['aulas'])->get();
-        return response()->json($turmas, 200);
+    public function index(){
+        $turma = turma::with(['aulas'])->get();
+        return response()->json($turma, 200);
     }
 
     //-----------------------------------------------------------------------------------
@@ -21,8 +19,7 @@ class TurmaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $validated = $request->validate([
             'turmaRepresentante' => 'required|string|max:255',
             'qtdAlunos' => 'required|integer|min:1',
@@ -38,8 +35,7 @@ class TurmaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
-    {
+    public function show($id){
         $turma = Turma::with(['aulas'])->findOrFail($id);
         return response()->json($turma, 200);
     }
@@ -49,8 +45,7 @@ class TurmaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         $turma = Turma::findOrFail($id);
 
         $validated = $request->validate([
@@ -68,8 +63,7 @@ class TurmaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
-    {
+    public function destroy($id){
         $turma = Turma::findOrFail($id);
         $turma->delete();
 
@@ -81,11 +75,10 @@ class TurmaController extends Controller
     /**
      * buscar turma por representante
      */
-    public function porRepresentante($representante)
-    {
-        $turmas = Turma::where('turmaRepresentante', 'like', "%{$representante}%")
-                    ->get();
+    public function porRepresentante($representante){
+        $turma = Turma::where('turmaRepresentante', 'like', "%{$representante}%")
+            ->get();
         
-        return response()->json($turmas, 200);
+        return response()->json($turma, 200);
     }
 }

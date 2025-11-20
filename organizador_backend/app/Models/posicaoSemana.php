@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class posicao_semana extends Model{
+class posicaoSemana extends Model{
     use HasFactory;
 
-    protected $table = 'posicao_semana';
+    protected $table = 'posicaoSemana';
 
     protected $fillable = [
         'diaSemana',

@@ -4,21 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Usuario extends Model
-{
+class usuario extends Model{
     protected $table = 'usuario';
 
     protected $fillable = [
-        'Permissao',
-        'SenhaHash', 
-        'Matricula',
-        'Nome',
-        'Turma_ID',
-        'Curso',
-        'Entrada',
+        'permissao',
+        'senhaHash', 
+        'matricula',
+        'nome',
+        'turma_id',
+        'curso',
+        'entrada',
     ];
 
     public function turma(){
-        return $this->belongsTo(Turma::class, 'Turma_ID', 'id');
+        return $this->belongsTo(turma::class, 'turma_id', 'id');
     }
 }

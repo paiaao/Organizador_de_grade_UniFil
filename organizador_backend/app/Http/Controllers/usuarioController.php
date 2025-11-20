@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\Hash;
 
 /** 
 *!       Niveis de permissao:
-*!       0 - Admin
-*!       1 - Professor
-*!       2 - Aluno
+*!       1 - Admin
+*!       2 - Professor
+*!       3 - Aluno
 */
 
 class UsuarioController extends Controller{
@@ -28,20 +29,26 @@ class UsuarioController extends Controller{
      */
     public function store(Request $request){
         $validated = $request->validate([
-            'permissao' => 'required|integer|min:0|max:2',
-            'senhaHash' => 'required|string|max:255',
+            'permissao' => 'required|integer|min:0|max:3',
+            'senhaHash' => 'required|string|min:6|max:255',
             'matricula' => 'nullable|string|max:255|unique:usuario',
             'nome' => 'required|string|max:255',
-            'Turma_ID' => 'nullable|exists:turmas,id',
-            'Curso' => 'nullable|string|max:255',
-            'Entrada' => 'required|date',
+            'turma_id' => 'nullable|exists:turma,id',
+            'curso' => 'nullable|string|max:255',
+            'entrada' => 'required|string',
         ]);
+
+        // Aplica hash na senha antes de salvar
+        $validated['senhaHash'] = Hash::make($validated['senhaHash']);
 
         $usuario = Usuario::create($validated);
 
         $usuario->load(['turma']);
 
-        return response()->json($usuario, 201);
+        return response()->json([
+            'message' => 'Usuário criado com sucesso',
+            'usuario' => $usuario
+        ], 201);
     }
 
     //-----------------------------------------------------------------------------------
@@ -49,8 +56,7 @@ class UsuarioController extends Controller{
     /**
      * Display the specified resource.
      */
-    public function show($id)
-    {
+    public function show($id){
         $usuario = Usuario::with(['turma'])->findOrFail($id);
         return response()->json($usuario, 200);
     }
@@ -60,19 +66,23 @@ class UsuarioController extends Controller{
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         $usuario = Usuario::findOrFail($id);
 
         $validated = $request->validate([
-            'permissao' => 'sometimes|required|integer|min:0|max:2',
-            'senhaHash' => 'sometimes|required|string|max:255',
+            'permissao' => 'sometimes|required|integer|min:0|max:3',
+            'senhaHash' => 'sometimes|required|string|min:6|max:255',
             'matricula' => 'sometimes|nullable|string|max:255|unique:usuario,matricula,' . $usuario->id,
             'nome' => 'sometimes|required|string|max:255',
-            'Turma_ID' => 'sometimes|nullable|exists:turmas,id',
-            'Curso' => 'sometimes|nullable|string|max:255',
-            'Entrada' => 'sometimes|required|date',
+            'turma_id' => 'sometimes|nullable|exists:turma,id',
+            'curso' => 'sometimes|nullable|string|max:255',
+            'entrada' => 'sometimes|required|string',
         ]);
+
+        // Se uma nova senha foi fornecida, aplica hash
+        if (isset($validated['senhaHash'])) {
+            $validated['senhaHash'] = Hash::make($validated['senhaHash']);
+        }
 
         $usuario->update($validated);
 
@@ -86,8 +96,7 @@ class UsuarioController extends Controller{
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
-    {
+    public function destroy($id){
         $usuario = Usuario::findOrFail($id);
         $usuario->delete();
 
@@ -99,8 +108,7 @@ class UsuarioController extends Controller{
     /**
      * busca usuario por nome
      */
-    public function porNome($nome)
-    {
+    public function porNome($nome){
         $usuarios = Usuario::with(['turma'])
                     ->where('nome', 'like', "%{$nome}%")
                     ->get();
@@ -113,10 +121,9 @@ class UsuarioController extends Controller{
     /**
      * busca usuarios por turma
      */
-    public function porTurma($turmaId)
-    {
+    public function porTurma($turmaId){
         $usuarios = Usuario::with(['turma'])
-                    ->where('Turma_ID', $turmaId)
+                    ->where('turma_id', $turmaId)
                     ->get();
         
         return response()->json($usuarios, 200);
@@ -128,7 +135,7 @@ class UsuarioController extends Controller{
      */
     public function admins(){
     
-        $admins = Usuario::whereIn('permissao', 0)
+        $admins = Usuario::where('permissao', 1)
                     ->get();
         
         return response()->json($admins, 200);
@@ -140,7 +147,7 @@ class UsuarioController extends Controller{
      */
     public function professores(){
     
-        $professores = Usuario::whereIn('permissao', 1)
+        $professores = Usuario::where('permissao', 2)
                     ->get();
         
         return response()->json($professores, 200);
@@ -152,9 +159,41 @@ class UsuarioController extends Controller{
      * busca alunos por permissao
      */
     public function alunos(){
-        $alunos = Usuario::where('permissao', 2)
+        $alunos = Usuario::where('permissao', 3)
                     ->get();
         
         return response()->json($alunos, 200);
+    }
+
+    //-----------------------------------------------------------------------------------
+
+    /**
+     * Método para login de usuário
+     */
+    public function login(Request $request)
+    {
+        $request->validate([
+            'login' => 'required|string', // Campo único para matricula ou nome
+            'senhaHash' => 'required|string',
+        ]);
+
+        // Primeiro tenta buscar por matricula (para alunos)
+        $usuario = Usuario::where('matricula', $request->login)->first();
+
+        // Se não encontrou por matricula, busca por nome (para admins/professores)
+        if (!$usuario) {
+            $usuario = Usuario::where('nome', $request->login)->first();
+        }
+
+        if (!$usuario || !Hash::check($request->senhaHash, $usuario->senhaHash)) {
+            return response()->json([
+                'message' => 'Credenciais inválidas'
+            ], 401);
+        }
+
+        return response()->json([
+            'message' => 'Login realizado com sucesso',
+            'usuario' => $usuario
+        ], 200);
     }
 }

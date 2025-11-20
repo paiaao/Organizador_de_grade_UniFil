@@ -3,16 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Uc;
+use App\Models\uc;
 
-class UcController extends Controller
-{
+class UcController extends Controller{
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $ucs = Uc::with(['aulas'])->get();
+    public function index(){
+        $ucs = Uc::with(['aula'])->get();
         return response()->json($ucs, 200);
     }
 
@@ -21,10 +19,9 @@ class UcController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $validated = $request->validate([
-            'nomeUC' => 'required|string|max:255',
+            'nomeUc' => 'required|string|max:255',
             'tipo' => 'required|string|max:255',
             'cargahoraria' => 'required|integer|min:1',
         ]);
@@ -39,9 +36,8 @@ class UcController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
-    {
-        $uc = Uc::with(['aulas'])->findOrFail($id);
+    public function show($id){
+        $uc = Uc::with(['aula'])->findOrFail($id);
         return response()->json($uc, 200);
     }
 
@@ -50,12 +46,11 @@ class UcController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         $uc = Uc::findOrFail($id);
 
         $validated = $request->validate([
-            'nomeUC' => 'sometimes|required|string|max:255',
+            'nomeUc' => 'sometimes|required|string|max:255',
             'tipo' => 'sometimes|required|string|max:255',
             'cargahoraria' => 'sometimes|required|integer|min:1',
         ]);
@@ -70,8 +65,7 @@ class UcController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
-    {
+    public function destroy($id){
         $uc = Uc::findOrFail($id);
         $uc->delete();
 
@@ -83,8 +77,7 @@ class UcController extends Controller
     /**
      * Buscar UCs por tipo
      */
-    public function porTipo($tipo)
-    {
+    public function porTipo($tipo){
         $ucs = Uc::where('tipo', 'like', "%{$tipo}%")
                     ->get();
         

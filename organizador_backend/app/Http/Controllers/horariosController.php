@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Horarios;
+use App\Models\horarios;
 
 class HorariosController extends Controller{
     /**
@@ -28,8 +28,8 @@ class HorariosController extends Controller{
      */
     public function store(Request $request){
         $validated = $request->validate([
-            'turma_id' => 'required|exists:turmas,id',
-            'posicao_semana_id' => 'required|exists:posicao_semana,id',
+            'turma_id' => 'required|exists:turma,id',
+            'posicaoSemana_id' => 'required|exists:posicaoSemana,id',
             'aula_id' => 'required|exists:aula,id',
             'sala_id' => 'required|exists:sala,id',
             'professor_id' => 'required|exists:usuario,id',
@@ -74,8 +74,8 @@ class HorariosController extends Controller{
         $horario = Horarios::findOrFail($id);
 
         $validated = $request->validate([
-            'turma_id' => 'sometimes|required|exists:turmas,id',
-            'posicao_semana_id' => 'sometimes|required|exists:posicao_semana,id',
+            'turma_id' => 'sometimes|required|exists:turma,id',
+            'posicaoSemana_id' => 'sometimes|required|exists:posicaoSemana,id',
             'aula_id' => 'sometimes|required|exists:aula,id',
             'sala_id' => 'sometimes|required|exists:sala,id',
             'professor_id' => 'sometimes|required|exists:usuario,id',
@@ -148,15 +148,14 @@ class HorariosController extends Controller{
     /**
      * busca horarios por posicao da semana
      */
-    public function porPosicaoSemana($posicaoSemanaId)
-    {
+    public function porPosicaoSemana($posicaoSemanaId){
         $horarios = Horarios::with([
             'turma', 
             'posicaoSemana', 
             'aula', 
             'sala', 
             'professor'
-        ])->where('posicao_semana_id', $posicaoSemanaId)
+        ])->where('posicaoSemana_id', $posicaoSemanaId)
         ->get();
         
         return response()->json($horarios, 200);

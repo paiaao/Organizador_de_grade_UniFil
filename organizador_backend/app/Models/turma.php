@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class turma extends Model{
     use HasFactory;
 
-    protected $table = 'turmas';
+    protected $table = 'turma';
 
     protected $fillable = [
         'turmaRepresentante',

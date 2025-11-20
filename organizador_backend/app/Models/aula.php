@@ -12,10 +12,13 @@ class aula extends Model{
 
     protected $fillable = [
         'professor_id', 
-        'UC_ID',          
+        'uc_id',          
     ];
 
     public function uc(){
-        return $this->belongsTo(UC::class, 'UC_ID', 'id');
+        return $this->belongsTo(uc::class, 'uc_id', 'id');
+    }
+    public function professor(){
+        return $this->belongsTo(usuario::class, 'professor_id', 'id');
     }
 }

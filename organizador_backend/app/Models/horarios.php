@@ -9,10 +9,9 @@ class horarios extends Model{
     use HasFactory;
 
     protected $table = 'horarios';
-
     protected $fillable = [
         'turma_id',
-        'posicao_semana_id', 
+        'posicaoSemana_id', 
         'aula_id',
         'sala_id',
         'professor_id',
@@ -23,7 +22,7 @@ class horarios extends Model{
     }
 
     public function posicaoSemana(){
-        return $this->belongsTo(posicao_semana::class, 'posicao_semana_id', 'id');
+        return $this->belongsTo(posicaoSemana::class, 'posicaoSemana_id', 'id');
     }
 
     public function aula(){

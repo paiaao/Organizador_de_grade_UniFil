@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sala;
+use App\Models\sala;
 use Illuminate\Http\Request;
 
 class SalaController extends Controller{

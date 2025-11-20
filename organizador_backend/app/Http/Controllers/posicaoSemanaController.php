@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\posicao_semana;
+use App\Models\posicaoSemana;
 
 class PosicaoSemanaController extends Controller{
     /**
      * Display a listing of the resource.
      */
     public function index(){
-        return response()->json(posicao_semana::all(), 200);
+        return response()->json(posicaoSemana::all(), 200);
     }
 
     //-----------------------------------------------------------------------------------
@@ -21,12 +21,12 @@ class PosicaoSemanaController extends Controller{
     public function store(Request $request){
         $validated = $request->validate([
             'diaSemana' => 'required|string|max:255',
-            'horario' => 'required|date_format:H:i:s',
+            'horario' => 'required|string',
         ]);
 
-        $posicao_semana = posicao_semana::create($validated);
+        $posicaoSemana = posicaoSemana::create($validated);
 
-        return response()->json($posicao_semana, 201);
+        return response()->json($posicaoSemana, 201);
     }
 
     //-----------------------------------------------------------------------------------
@@ -35,8 +35,8 @@ class PosicaoSemanaController extends Controller{
      * Display the specified resource.
      */
     public function show($id){
-        $posicao_semana = posicao_semana::findOrFail($id);
-        return response()->json($posicao_semana, 200);
+        $posicaoSemana = posicaoSemana::findOrFail($id);
+        return response()->json($posicaoSemana, 200);
     }
 
     //-----------------------------------------------------------------------------------
@@ -45,16 +45,16 @@ class PosicaoSemanaController extends Controller{
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id){
-        $posicao_semana = posicao_semana::findOrFail($id);
+        $posicaoSemana = posicaoSemana::findOrFail($id);
 
         $validated = $request->validate([
             'diaSemana' => 'sometimes|required|string|max:255',
             'horario' => 'sometimes|required|date_format:H:i:s',
         ]);
 
-        $posicao_semana->update($validated);
+        $posicaoSemana->update($validated);
 
-        return response()->json($posicao_semana, 200);
+        return response()->json($posicaoSemana, 200);
     }
 
     //-----------------------------------------------------------------------------------
@@ -63,8 +63,8 @@ class PosicaoSemanaController extends Controller{
      * Remove the specified resource from storage.
      */
     public function destroy($id){
-        $posicao_semana = posicao_semana::findOrFail($id);
-        $posicao_semana->delete();
+        $posicaoSemana = posicaoSemana::findOrFail($id);
+        $posicaoSemana->delete();
 
         return response()->json(null, 204);
     }

@@ -12,12 +12,12 @@ class uc extends Model{
     protected $primaryKey = 'id'; //depois eu tiro
 
     protected $fillable = [
-        'nomeUC',
+        'nomeUc',
         'tipo',
         'cargahoraria',
     ];
 
     public function aulas(){
-        return $this->hasMany(Aula::class, 'uc_id', 'id');
+        return $this->hasMany(aula::class, 'uc_id', 'id');
     }
 }

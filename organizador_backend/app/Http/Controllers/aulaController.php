@@ -3,17 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Aula;
+use App\Models\aula;
 
-class AulaController extends Controller
-{
+class AulaController extends Controller{
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $aulas = Aula::with(['uc', 'professor'])->get();
-        return response()->json($aulas, 200);
+    public function index(){
+        $aula = Aula::with(['uc', 'professor'])->get();
+        return response()->json($aula, 200);
     }
 
     //-----------------------------------------------------------------------------------
@@ -21,11 +19,10 @@ class AulaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $validated = $request->validate([
             'professor_id' => 'required|exists:usuario,id',
-            'UC_ID' => 'required|exists:uc,id',
+            'uc_id' => 'required|exists:uc,id',
         ]);
 
         $aula = Aula::create($validated);
@@ -40,8 +37,7 @@ class AulaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
-    {
+    public function show($id){
         $aula = Aula::with(['uc', 'professor'])->findOrFail($id);
         return response()->json($aula, 200);
     }
@@ -51,18 +47,16 @@ class AulaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         $aula = Aula::findOrFail($id);
 
         $validated = $request->validate([
             'professor_id' => 'sometimes|required|exists:usuario,id',
-            'UC_ID' => 'sometimes|required|exists:uc,id',
+            'uc_id' => 'sometimes|required|exists:uc,id',
         ]);
 
         $aula->update($validated);
 
-        // Carrega os relacionamentos atualizados
         $aula->load(['uc', 'professor']);
 
         return response()->json($aula, 200);
@@ -73,8 +67,7 @@ class AulaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
-    {
+    public function destroy($id){
         $aula = Aula::findOrFail($id);
         $aula->delete();
 
@@ -86,13 +79,12 @@ class AulaController extends Controller
     /**
      * Buscar aulas por id do professor
      */
-    public function buscaPorProfessor($professorId)
-    {
-        $aulas = Aula::with(['uc', 'professor'])
+    public function buscaPorProfessor($professorId){
+        $aula = Aula::with(['uc', 'professor'])
                     ->where('professor_id', $professorId)
                     ->get();
         
-        return response()->json($aulas, 200);
+        return response()->json($aula, 200);
     }
 
     //-----------------------------------------------------------------------------------
@@ -100,12 +92,11 @@ class AulaController extends Controller
     /**
      * Buscar aulas por id da UC
      */
-    public function buscaPorUC($ucId)
-    {
-        $aulas = Aula::with(['uc', 'professor'])
-                    ->where('UC_ID', $ucId)
+    public function buscaPorUC($ucId){
+        $aula = Aula::with(['uc', 'professor'])
+                    ->where('uc_id', $ucId)
                     ->get();
         
-        return response()->json($aulas, 200);
+        return response()->json($aula, 200);
     }
 }
