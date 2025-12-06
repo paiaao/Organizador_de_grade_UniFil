@@ -22,6 +22,20 @@
 
         <div class="w-full">
           <label class="block text-[#545252] font-medium mb-1 text-sm">
+            Curso
+          </label>
+          <div class="border-b border-[#545252] pb-1 flex items-center">
+            <select v-model="formData.curso" class="w-full bg-transparent outline-none text-[#545252] text-base">
+              <option value="">Selecione seu curso</option>
+              <option value="Engenharia de Software">Engenharia de Software</option>
+              <option value="Ciências da Computação">Ciências da Computação</option>
+            </select>
+            <img src="/livro.png" alt="Livro" class="w-6 h-6 ml-2" />
+          </div>
+        </div>
+
+        <div class="w-full">
+          <label class="block text-[#545252] font-medium mb-1 text-sm">
             Turma
           </label>
           <div class="border-b border-[#545252] pb-1 flex items-center">
@@ -106,13 +120,13 @@ const api = inject('api');
 
 const formData = reactive({
   nome: '',
+  curso: '',
   turma_id: '',
   matricula: '',
   senhaHash: '',
   senhaHash_confirmation: '',
   permissao: 3,
-  entrada: new Date().toISOString().split('T')[0],
-  curso: 'Curso'
+  entrada: new Date().toISOString().split('T')[0]
 });
 
 const mostrarMensagem = (texto, tipo = 'erro') => {
@@ -154,7 +168,7 @@ const submitForm = async () => {
   
   mensagem.value = { texto: '', tipo: '' };
   
-  if (!formData.nome || !formData.matricula || !formData.senhaHash) {
+  if (!formData.nome || !formData.curso || !formData.matricula || !formData.senhaHash) {
     mostrarMensagem('Preencha todos os campos obrigatórios', 'erro');
     return;
   }
@@ -170,10 +184,10 @@ const submitForm = async () => {
     const dataToSend = {
       permissao: formData.permissao,
       nome: formData.nome,
+      curso: formData.curso,
       matricula: formData.matricula,
       entrada: formData.entrada,
       senhaHash: formData.senhaHash,
-      curso: formData.curso,
       turma_id: formData.turma_id || null
     };
 
