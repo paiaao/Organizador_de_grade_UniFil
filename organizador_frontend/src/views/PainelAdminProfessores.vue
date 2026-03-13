@@ -1,226 +1,233 @@
 <template>
-  <div class="flex h-screen bg-gray-100" @click="fecharModalFora">
-    <div class="w-64 bg-[#ff9421] flex flex-col">
-      <div class="h-32 flex items-center justify-center overflow-hidden relative">
-        <img src="/logo-unifil.png" alt="UniFil" class="min-w-[1000px] h-auto scale-125" />
-        <hr class="absolute bottom-2 left-4 right-4 border-white border-t-2">
+  <div class="flex h-screen bg-stone-50" @click="fecharModalFora">
+    <!-- Sidebar -->
+    <div class="w-60 bg-[#ff9421] flex flex-col shadow-lg flex-shrink-0">
+      <div class="h-20 flex items-center justify-center px-4 border-b border-white/20">
+        <img src="/logo-unifil.png" alt="UniFil" class="h-10 w-auto object-contain" />
       </div>
 
-      <nav class="flex-1 px-4 space-y-4 mt-2">
-        <button v-for="item in menuItems" :key="item.id"
-          @click="navegar(item)":class="[
-            'w-full px-4 py-3 text-left text-white font-medium rounded-lg text-sm transition-all',
-            activeMenu === item.id ? 'bg-[#5a5a5a]' : 'bg-[#757575] hover:bg-[#858585]'
-          ]">
-
+      <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <button
+          v-for="item in menuItems"
+          :key="item.id"
+          @click="navegar(item)"
+          :class="['w-full px-4 py-2.5 text-left text-sm font-medium rounded-lg transition-all duration-150',
+            activeMenu === item.id
+              ? 'bg-white text-[#ff9421] shadow-sm'
+              : 'text-white hover:bg-white/15']"
+        >
           {{ item.label }}
         </button>
       </nav>
 
-      <div class="p-5 pb-6">
-        <button @click="sair" class="hover:opacity-80 transition" title="Sair">
-          <img src="/sair.png" alt="Sair" class="w-10 h-10" />
+      <div class="px-3 py-4 border-t border-white/20">
+        <button
+          @click="sair"
+          class="w-full flex items-center gap-3 px-4 py-2.5 text-white text-sm font-medium rounded-lg hover:bg-white/15 transition-all duration-150"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Sair
         </button>
       </div>
     </div>
 
-    <div class="flex-1 flex flex-col relative">
-      <div class="p-8">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center gap-4">
-            <select v-model="selectedProfessor" @change="carregarProfessorSelecionado" class="w-275 bg-[#ffac26] text-white px-8 py-2.5 rounded text-sm font-medium cursor-pointer border-none outline-none">
-              <option value="">
-                Selecione um professor
-              </option>
-              <option v-for="professor in professores" :key="professor.id" :value="professor.id">
-                {{ professor.nome }}
-              </option>
-            </select>
-          </div>
-          <button @click="toggleModal" class="bg-[#ffac26] text-white px-10 py-2.5 rounded-full text-sm font-medium hover:bg-orange-600 transition shadow-md">
-            +
+    <!-- Conteúdo -->
+    <div class="flex-1 flex flex-col overflow-hidden relative">
+      <!-- Header -->
+      <div class="bg-white border-b border-stone-200 px-8 py-4 flex items-center justify-between">
+        <div>
+          <h1 class="text-lg font-bold text-stone-800">Professores</h1>
+          <p class="text-xs text-stone-500">Gerenciamento de professores</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <select
+            v-model="selectedProfessor"
+            @change="carregarProfessorSelecionado"
+            class="border border-stone-300 rounded-lg px-4 py-2 text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
+          >
+            <option value="">Selecione um professor</option>
+            <option v-for="professor in professores" :key="professor.id" :value="professor.id">
+              {{ professor.nome }}
+            </option>
+          </select>
+          <button
+            @click.stop="toggleModal"
+            class="flex items-center gap-2 bg-[#ff9421] hover:bg-[#e06800] text-white px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Novo professor
           </button>
         </div>
       </div>
 
-      <div class="flex-1 flex items-center justify-center p-8">
-        <div class="bg-[#ffeccf] rounded-xl p-8 shadow-lg w-80 min-h-[500px] flex flex-col justify-between">
-          <div>
-            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">
-              Professores
-            </h2>
-            
-            <hr class="border-gray-300 mb-6">
-            
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <div class="flex-1">
-                  <label class="block text-gray-700 font-medium mb-2 text-sm">
-                    Nome
-                  </label>
-                  <div class="border-b border-gray-700 pb-1 flex items-center">
-                    <input 
-                      v-if="editando.nome" 
-                      v-model="professorEditado.nome"
-                      ref="nomeInput"
-                      type="text" 
-                      class="w-full bg-transparent text-gray-800 text-base outline-none"
-                      @blur="salvarCampo('nome')"
-                      @keyup.enter="salvarCampo('nome')"
-                      @keyup.esc="cancelarEdicao('nome')"
-                    >
-                    <span v-else class="w-full bg-transparent text-gray-800 text-base">
-                      {{ professorSelecionado.nome || 'Selecione um professor' }}
-                    </span>
-                    <button 
-                      @click="toggleEdicao('nome')" 
-                      class="ml-2 hover:opacity-70 transition"
-                      :disabled="!selectedProfessor"
-                    >
-                      <img src="/lapis.png" alt="Editar" class="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="flex items-center justify-between">
-                <div class="flex-1">
-                  <label class="block text-gray-700 font-medium mb-2 text-sm">
-                    Senha
-                  </label>
-                  <div class="border-b border-gray-700 pb-1 flex items-center">
-                    <input 
-                      v-if="editando.senha" 
-                      v-model="professorEditado.senhaHash"
-                      ref="senhaInput"
-                      type="password" 
-                      placeholder="Nova senha (mín. 6 caracteres)"
-                      class="w-full bg-transparent text-gray-800 text-base outline-none"
-                      @blur="salvarCampo('senha')"
-                      @keyup.enter="salvarCampo('senha')"
-                      @keyup.esc="cancelarEdicao('senha')"
-                    >
-                    <span v-else class="w-full bg-transparent text-gray-500 text-base">
-                      ••••••••
-                    </span>
-                    <button 
-                      @click="toggleEdicao('senha')" 
-                      class="ml-2 hover:opacity-70 transition"
-                      :disabled="!selectedProfessor"
-                    >
-                      <img src="/lapis.png" alt="Editar" class="w-5 h-5" />
-                    </button>
-                  </div>
-                  <div v-if="editando.senha && professorEditado.senhaHash.length > 0 && professorEditado.senhaHash.length < 6" 
-                       class="text-red-500 text-xs mt-1">
-                    A senha deve ter pelo menos 6 caracteres
-                  </div>
-                </div>
-              </div>
-              
-              <div class="flex items-center justify-between">
-                <div class="flex-1">
-                  <label class="block text-gray-700 font-medium mb-2 text-sm">
-                    Entrada
-                  </label>
-                  <div class="border-b border-gray-700 pb-1 flex items-center">
-                    <input 
-                      v-if="editando.entrada" 
-                      v-model="professorEditado.entrada"
-                      ref="entradaInput"
-                      type="date" 
-                      class="w-full bg-transparent text-gray-800 text-base outline-none"
-                      @blur="salvarCampo('entrada')"
-                      @keyup.esc="cancelarEdicao('entrada')"
-                    >
-                    <span v-else class="w-full bg-transparent text-gray-800 text-base">
-                      {{ formatarData(professorSelecionado.entrada) || 'Selecione um professor' }}
-                    </span>
-                    <button 
-                      @click="toggleEdicao('entrada')" 
-                      class="ml-2 hover:opacity-70 transition"
-                      :disabled="!selectedProfessor"
-                    >
-                      <img src="/lapis.png" alt="Editar" class="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
+      <!-- Card do professor -->
+      <div class="flex-1 overflow-auto p-8 flex items-start justify-center">
+        <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 w-full max-w-md">
+          <!-- Avatar -->
+          <div class="flex flex-col items-center mb-6">
+            <div class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-3">
+              <svg class="w-8 h-8 text-[#ff9421]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <h2 class="text-base font-bold text-stone-800">{{ professorSelecionado.nome || 'Selecione um professor' }}</h2>
+            <p class="text-xs text-stone-500">Professor</p>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Nome -->
+            <div>
+              <label class="block text-xs font-semibold text-stone-500 uppercase tracking-wide mb-1.5">Nome</label>
+              <div class="flex items-center gap-2">
+                <input
+                  v-if="editando.nome"
+                  v-model="professorEditado.nome"
+                  ref="nomeInput"
+                  type="text"
+                  class="flex-1 border border-stone-300 rounded-lg px-3 py-2 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                  @blur="salvarCampo('nome')"
+                  @keyup.enter="salvarCampo('nome')"
+                  @keyup.esc="cancelarEdicao('nome')"
+                />
+                <span v-else class="flex-1 px-3 py-2 text-stone-800 text-sm bg-stone-50 rounded-lg border border-stone-200">
+                  {{ professorSelecionado.nome || '—' }}
+                </span>
+                <button @click="toggleEdicao('nome')" :disabled="!selectedProfessor" class="p-2 rounded-lg hover:bg-orange-50 text-stone-400 hover:text-[#ff9421] transition-all disabled:opacity-30">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
               </div>
             </div>
+
+            <!-- Senha -->
+            <div>
+              <label class="block text-xs font-semibold text-stone-500 uppercase tracking-wide mb-1.5">Senha</label>
+              <div class="flex items-center gap-2">
+                <input
+                  v-if="editando.senha"
+                  v-model="professorEditado.senhaHash"
+                  ref="senhaInput"
+                  type="password"
+                  placeholder="Nova senha (mín. 6 caracteres)"
+                  class="flex-1 border border-stone-300 rounded-lg px-3 py-2 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                  @blur="salvarCampo('senha')"
+                  @keyup.enter="salvarCampo('senha')"
+                  @keyup.esc="cancelarEdicao('senha')"
+                />
+                <span v-else class="flex-1 px-3 py-2 text-stone-500 text-sm bg-stone-50 rounded-lg border border-stone-200">
+                  ••••••••
+                </span>
+                <button @click="toggleEdicao('senha')" :disabled="!selectedProfessor" class="p-2 rounded-lg hover:bg-orange-50 text-stone-400 hover:text-[#ff9421] transition-all disabled:opacity-30">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+              </div>
+              <p v-if="editando.senha && professorEditado.senhaHash.length > 0 && professorEditado.senhaHash.length < 6"
+                 class="text-red-500 text-xs mt-1">A senha deve ter pelo menos 6 caracteres</p>
+            </div>
+
+            <!-- Entrada -->
+            <div>
+              <label class="block text-xs font-semibold text-stone-500 uppercase tracking-wide mb-1.5">Entrada</label>
+              <div class="flex items-center gap-2">
+                <input
+                  v-if="editando.entrada"
+                  v-model="professorEditado.entrada"
+                  ref="entradaInput"
+                  type="date"
+                  class="flex-1 border border-stone-300 rounded-lg px-3 py-2 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                  @blur="salvarCampo('entrada')"
+                  @keyup.esc="cancelarEdicao('entrada')"
+                />
+                <span v-else class="flex-1 px-3 py-2 text-stone-800 text-sm bg-stone-50 rounded-lg border border-stone-200">
+                  {{ formatarData(professorSelecionado.entrada) || '—' }}
+                </span>
+                <button @click="toggleEdicao('entrada')" :disabled="!selectedProfessor" class="p-2 rounded-lg hover:bg-orange-50 text-stone-400 hover:text-[#ff9421] transition-all disabled:opacity-30">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ação de deletar -->
+          <div class="mt-6 pt-4 border-t border-stone-100">
+            <button
+              @click="deletarProfessor"
+              :disabled="!selectedProfessor"
+              class="flex items-center gap-2 text-red-500 hover:text-red-700 text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Deletar professor
+            </button>
           </div>
         </div>
       </div>
 
-      <button 
-        @click="deletarProfessor" 
-        :disabled="!selectedProfessor"
-        class="absolute bottom-8 right-8 p-3 transition hover:opacity-70"
-        :class="selectedProfessor ? 'cursor-pointer' : 'cursor-not-allowed opacity-40'"
-        title="Deletar professor selecionado"
-      >
-        <img src="/lixo.png" alt="Deletar" class="w-8 h-8" />
-      </button>
+      <!-- Modal -->
+      <div v-if="showModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 backdrop-blur-sm" @click="fecharModalFora">
+        <div class="bg-white rounded-2xl p-8 w-96 shadow-2xl border border-stone-100" @click.stop>
+          <h3 class="text-xl font-bold text-stone-800 mb-1">Novo professor</h3>
+          <p class="text-stone-500 text-sm mb-6">Preencha os dados para cadastrar</p>
 
-      <div v-if="showModal" class="fixed inset-0 flex items-center justify-center z-50" @click="fecharModalFora">
-        <div class="bg-gray-700 rounded-lg p-6 w-80 shadow-2xl border border-gray-600 transform transition-all" @click.stop>
-          <h3 class="text-xl font-bold text-white mb-4 text-center">
-            Cadastro de novo professor
-          </h3>
-          
           <div class="space-y-4">
             <div>
-              <label class="block text-white font-medium mb-2 text-sm">
-                *Nome:
-              </label>
-              <input 
+              <label class="block text-sm font-medium text-stone-700 mb-1.5">Nome <span class="text-red-500">*</span></label>
+              <input
                 v-model="novoProfessor.nome"
-                type="text" 
-                class="w-full bg-gray-600 text-white px-3 py-2 rounded border border-gray-500 outline-none focus:border-[#ffac26]"
-                placeholder="Digite o nome"
+                type="text"
+                placeholder="Nome do professor"
+                class="w-full border border-stone-300 rounded-lg px-4 py-3 text-stone-700 placeholder-stone-400 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                 @keyup.enter="criarNovoProfessor"
-              >
-            </div>
-            
-            <div>
-              <label class="block text-white font-medium mb-2 text-sm">
-                *Senha:
-              </label>
-              <input 
-                v-model="novoProfessor.senha"
-                type="password" 
-                class="w-full bg-gray-600 text-white px-3 py-2 rounded border border-gray-500 outline-none focus:border-[#ffac26]"
-                placeholder="Digite a senha"
-                @keyup.enter="criarNovoProfessor"
-              >
-              <div v-if="novoProfessor.senha && novoProfessor.senha.length < 6" class="text-red-400 text-xs mt-1">
-                A senha deve ter pelo menos 6 caracteres
-              </div>
+              />
             </div>
 
             <div>
-              <label class="block text-white font-medium mb-2 text-sm">
-                Entrada:
-              </label>
-              <input 
-                v-model="novoProfessor.entrada"
-                type="date" 
-                class="w-full bg-gray-600 text-white px-3 py-2 rounded border border-gray-500 outline-none focus:border-[#ffac26]"
-              >
+              <label class="block text-sm font-medium text-stone-700 mb-1.5">Senha <span class="text-red-500">*</span></label>
+              <input
+                v-model="novoProfessor.senha"
+                type="password"
+                placeholder="Mínimo 6 caracteres"
+                class="w-full border border-stone-300 rounded-lg px-4 py-3 text-stone-700 placeholder-stone-400 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                @keyup.enter="criarNovoProfessor"
+              />
+              <p v-if="novoProfessor.senha && novoProfessor.senha.length < 6" class="text-red-500 text-xs mt-1">
+                A senha deve ter pelo menos 6 caracteres
+              </p>
             </div>
-            
-            <hr class="border-gray-500 my-4">
-            
-            <button 
+
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-1.5">Data de entrada</label>
+              <input
+                v-model="novoProfessor.entrada"
+                type="date"
+                class="w-full border border-stone-300 rounded-lg px-4 py-3 text-stone-700 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <div class="mt-6 flex gap-3">
+            <button
+              @click="fecharModalFora"
+              class="flex-1 py-3 border border-stone-300 text-stone-700 font-medium rounded-lg hover:bg-stone-50 transition text-sm"
+            >
+              Cancelar
+            </button>
+            <button
               @click="criarNovoProfessor"
               :disabled="!novoProfessor.nome || !novoProfessor.senha || novoProfessor.senha.length < 6"
-              :class="[
-                'w-full py-3 rounded font-medium transition',
-                novoProfessor.nome && novoProfessor.senha && novoProfessor.senha.length >= 6
-                  ? 'bg-[#ffac26] text-white hover:bg-orange-600 cursor-pointer'
-                  : 'bg-gray-500 text-gray-300 cursor-not-allowed'
-              ]"
+              class="flex-1 py-3 bg-[#ff9421] hover:bg-[#e06800] text-white font-semibold rounded-lg transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Gerar professor
+              Cadastrar
             </button>
           </div>
         </div>
@@ -269,7 +276,7 @@ export default {
   },
   async mounted() {
     this.api = this.$root.$api || this.$api;
-    
+
     const usuario = JSON.parse(localStorage.getItem('usuario'));
     if (!usuario || usuario.permissao !== 1) {
       this.$router.push('/loginAdmin');
@@ -283,8 +290,7 @@ export default {
       try {
         const response = await this.api.get('/api/usuarios');
         this.professores = response.data.filter(user => user.permissao === 2);
-      } catch (error) {
-      }
+      } catch (error) {}
     },
 
     async carregarProfessorSelecionado() {
@@ -292,31 +298,24 @@ export default {
         this.professorSelecionado = {};
         return;
       }
-
       try {
         const response = await this.api.get(`/api/usuarios/${this.selectedProfessor}`);
         this.professorSelecionado = response.data;
-        
         this.professorEditado = {
           nome: response.data.nome,
           senhaHash: '',
           entrada: response.data.entrada.split('T')[0]
         };
-      } catch (error) {
-      }
+      } catch (error) {}
     },
 
     toggleModal(event) {
-      if (event) {
-        event.stopPropagation();
-      }
+      if (event) event.stopPropagation();
       this.showModal = !this.showModal;
-      if (!this.showModal) {
-        this.limparNovoProfessor();
-      }
+      if (!this.showModal) this.limparNovoProfessor();
     },
 
-    fecharModalFora(event) {
+    fecharModalFora() {
       if (this.showModal) {
         this.showModal = false;
         this.limparNovoProfessor();
@@ -332,118 +331,67 @@ export default {
     },
 
     async criarNovoProfessor() {
-      if (!this.novoProfessor.nome || !this.novoProfessor.senha || this.novoProfessor.senha.length < 6) {
-        return;
-      }
-
+      if (!this.novoProfessor.nome || !this.novoProfessor.senha || this.novoProfessor.senha.length < 6) return;
       try {
-        const dadosProfessor = {
+        await this.api.post('/api/usuarios', {
           nome: this.novoProfessor.nome,
           senhaHash: this.novoProfessor.senha,
           permissao: 2,
           entrada: this.novoProfessor.entrada || new Date().toISOString().split('T')[0]
-        };
-
-        await this.api.post('/api/usuarios', dadosProfessor);
-        
+        });
         this.showModal = false;
         this.limparNovoProfessor();
         await this.carregarProfessores();
-        
-      } catch (error) {
-      }
+      } catch (error) {}
     },
 
     async deletarProfessor() {
-      if (!this.selectedProfessor) {
-        return;
-      }
-
-      const professorParaDeletar = this.professores.find(professor => professor.id === this.selectedProfessor);
-      
-      if (!professorParaDeletar) {
-        return;
-      }
-
-      const confirmacao = confirm(`Tem certeza que deseja deletar o professor "${professorParaDeletar.nome}"? Esta ação não pode ser desfeita.`);
-      
-      if (!confirmacao) {
-        return;
-      }
-
+      if (!this.selectedProfessor) return;
+      const prof = this.professores.find(p => p.id === this.selectedProfessor);
+      if (!prof) return;
+      if (!confirm(`Tem certeza que deseja deletar o professor "${prof.nome}"? Esta ação não pode ser desfeita.`)) return;
       try {
         await this.api.delete(`/api/usuarios/${this.selectedProfessor}`);
-        
         await this.carregarProfessores();
-        
         this.selectedProfessor = '';
         this.professorSelecionado = {};
-        this.professorEditado = {
-          nome: '',
-          senhaHash: '',
-          entrada: ''
-        };
-        
-      } catch (error) {
-      }
+        this.professorEditado = { nome: '', senhaHash: '', entrada: '' };
+      } catch (error) {}
     },
 
     toggleEdicao(campo) {
       if (this.salvando) return;
-      
-      Object.keys(this.editando).forEach(key => {
-        this.editando[key] = false;
-      });
-      
+      Object.keys(this.editando).forEach(key => { this.editando[key] = false; });
       this.editando[campo] = true;
-      
       this.$nextTick(() => {
-        const refName = `${campo}Input`;
-        if (this.$refs[refName]) {
-          this.$refs[refName].focus();
-        }
+        const ref = this.$refs[`${campo}Input`];
+        if (ref) ref.focus();
       });
     },
 
     cancelarEdicao(campo) {
       this.editando[campo] = false;
-      if (campo === 'nome') {
-        this.professorEditado.nome = this.professorSelecionado.nome;
-      } else if (campo === 'senha') {
-        this.professorEditado.senhaHash = '';
-      } else if (campo === 'entrada') {
-        this.professorEditado.entrada = this.professorSelecionado.entrada.split('T')[0];
-      }
+      if (campo === 'nome') this.professorEditado.nome = this.professorSelecionado.nome;
+      else if (campo === 'senha') this.professorEditado.senhaHash = '';
+      else if (campo === 'entrada') this.professorEditado.entrada = this.professorSelecionado.entrada.split('T')[0];
     },
 
     async salvarCampo(campo) {
-      if (this.salvando) return;
-      
-      if (!this.selectedProfessor) return;
-
+      if (this.salvando || !this.selectedProfessor) return;
       if (campo === 'senha' && this.professorEditado.senhaHash && this.professorEditado.senhaHash.length < 6) {
         this.$refs.senhaInput.focus();
         return;
       }
-
       this.salvando = true;
-
       try {
-        const dadosAtualizacao = {};
-
-        if (campo === 'nome') {
-          dadosAtualizacao.nome = this.professorEditado.nome;
-        } else if (campo === 'senha' && this.professorEditado.senhaHash) {
-          dadosAtualizacao.senhaHash = this.professorEditado.senhaHash;
-        } else if (campo === 'entrada') {
-          dadosAtualizacao.entrada = this.professorEditado.entrada;
-        }
-
-        if (Object.keys(dadosAtualizacao).length > 0) {
-          const response = await this.api.put(`/api/usuarios/${this.selectedProfessor}`, dadosAtualizacao);
+        const dados = {};
+        if (campo === 'nome') dados.nome = this.professorEditado.nome;
+        else if (campo === 'senha' && this.professorEditado.senhaHash) dados.senhaHash = this.professorEditado.senhaHash;
+        else if (campo === 'entrada') dados.entrada = this.professorEditado.entrada;
+        if (Object.keys(dados).length > 0) {
+          const response = await this.api.put(`/api/usuarios/${this.selectedProfessor}`, dados);
           this.professorSelecionado = response.data;
         }
-
         this.editando[campo] = false;
         this.professorEditado.senhaHash = '';
       } catch (error) {
@@ -455,15 +403,12 @@ export default {
 
     formatarData(data) {
       if (!data) return '';
-      const date = new Date(data);
-      return date.toLocaleDateString('pt-BR');
+      return new Date(data).toLocaleDateString('pt-BR');
     },
 
     navegar(item) {
       this.activeMenu = item.id;
-      if (item.rota) {
-        this.$router.push(item.rota).catch(() => {});
-      }
+      if (item.rota) this.$router.push(item.rota).catch(() => {});
     },
 
     sair() {
