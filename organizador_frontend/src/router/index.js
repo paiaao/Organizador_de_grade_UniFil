@@ -87,6 +87,11 @@ const router = createRouter({
       path: '/PainelAdminAlunos',
       name: 'PainelAdminAlunos',
       component: () => import('../views/PainelAdminAlunos.vue')
+    },
+    {
+      path: '/PainelCriaHorarios',
+      name: 'PainelCriaHorarios',
+      component: () => import('../views/PainelCriaHorarios.vue')
     }
   ],
 })

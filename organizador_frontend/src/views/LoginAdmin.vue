@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-center h-screen bg-[#ff9421]">
+  <div class="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-[#ff9421] to-[#ffbe78]">
     <div class="absolute top-1 w-full flex justify-center">
       <img src="/logo-unifil.png" alt="UniFil" class="w-80 md:w-96 lg:w-[800px] mx-auto" />
     </div>

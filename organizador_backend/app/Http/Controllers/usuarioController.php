@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Usuario;
+use App\Models\usuario;
 use Illuminate\Support\Facades\Hash;
 
 /** 
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 *!       3 - Aluno
 */
 
-class UsuarioController extends Controller{
+class usuarioController extends Controller{
     /**
      * Display a listing of the resource.
      */

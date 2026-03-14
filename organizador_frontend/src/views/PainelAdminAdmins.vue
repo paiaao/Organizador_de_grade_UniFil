@@ -23,7 +23,7 @@
       <div class="p-8">
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-4">
-            <select v-model="selectedAdmin" @change="carregarAdminSelecionado" class="w-275 bg-[#ffac26] text-white px-8 py-2.5 rounded text-sm font-medium cursor-pointer border-none outline-none">
+            <select v-model="selectedAdmin" @change="carregarAdminSelecionado" class="w-370 bg-[#ffac26] text-white px-8 py-2.5 rounded text-sm font-medium cursor-pointer border-none outline-none">
               <option value="">
                 Selecione um admin
               </option>
@@ -113,7 +113,6 @@
                 </div>
               </div>
               
-              <!-- Entrada -->
               <div class="flex items-center justify-between">
                 <div class="flex-1">
                   <label class="block text-gray-700 font-medium mb-2 text-sm">

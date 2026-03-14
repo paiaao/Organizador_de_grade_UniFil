@@ -8,7 +8,7 @@ use App\Http\Controllers\PosicaoSemanaController;
 use App\Http\Controllers\salaController;
 use App\Http\Controllers\turmaController;
 use App\Http\Controllers\UcController;
-use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\usuarioController;
  
 Route::resource('aulas', AulaController::class);
 Route::resource('horarios', HorariosController::class);
@@ -16,6 +16,6 @@ Route::resource('posicaoSemana', PosicaoSemanaController::class);
 Route::resource('salas', SalaController::class);
 Route::resource('turmas', TurmaController::class);
 Route::resource('ucs', UcController::class);
-Route::resource('usuarios', UsuarioController::class);
+Route::resource('usuarios', usuarioController::class);
 
 Route::post('/usuarios/login', [UsuarioController::class, 'login']);

@@ -28,7 +28,7 @@
       <div class="p-8">
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-4">
-            <select v-model="selectedAluno" @change="carregarAlunoSelecionado" class="w-304 bg-[#ffac26] text-white px-8 py-2.5 rounded text-sm font-medium cursor-pointer border-none outline-none">
+            <select v-model="selectedAluno" @change="carregarAlunoSelecionado" class="w-370 bg-[#ffac26] text-white px-8 py-2.5 rounded text-sm font-medium cursor-pointer border-none outline-none">
               <option value="">
                 Selecione um aluno
               </option>

@@ -17,7 +17,7 @@ return new class extends Migration{
             $table->string('nome');
             $table->foreignId('turma_id')->nullable()->constrained('turma');
             $table->string('curso')->nullable();
-            $table->date('entrada');
+            $table->string('entrada');
             $table->timestamps();
         });
     }
