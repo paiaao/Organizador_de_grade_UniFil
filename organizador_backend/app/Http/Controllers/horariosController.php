@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\horarios;
 
-class HorariosController extends Controller{
+class horariosController extends Controller{
     /**
      * Display a listing of the resource.
      */
@@ -29,7 +29,7 @@ class HorariosController extends Controller{
     public function store(Request $request){
         $validated = $request->validate([
             'turma_id' => 'required|exists:turma,id',
-            'posicaoSemana_id' => 'required|exists:posicaoSemana,id',
+            'posicaoSemana_id' => 'nullable|exists:posicaoSemana,id',
             'aula_id' => 'required|exists:aula,id',
             'sala_id' => 'required|exists:sala,id',
             'professor_id' => 'required|exists:usuario,id',
@@ -75,7 +75,7 @@ class HorariosController extends Controller{
 
         $validated = $request->validate([
             'turma_id' => 'sometimes|required|exists:turma,id',
-            'posicaoSemana_id' => 'sometimes|required|exists:posicaoSemana,id',
+            'posicaoSemana_id' => 'sometimes|nullable|exists:posicaoSemana,id',
             'aula_id' => 'sometimes|required|exists:aula,id',
             'sala_id' => 'sometimes|required|exists:sala,id',
             'professor_id' => 'sometimes|required|exists:usuario,id',

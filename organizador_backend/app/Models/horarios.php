@@ -18,7 +18,7 @@ class horarios extends Model{
     ];
 
     public function turma(){
-        return $this->belongsTo(Turma::class, 'turma_id', 'id');
+        return $this->belongsTo(turma::class, 'turma_id', 'id');
     }
 
     public function posicaoSemana(){
@@ -26,14 +26,14 @@ class horarios extends Model{
     }
 
     public function aula(){
-        return $this->belongsTo(Aula::class, 'aula_id', 'id');
+        return $this->belongsTo(aula::class, 'aula_id', 'id');
     }
 
     public function sala(){
-        return $this->belongsTo(Sala::class, 'sala_id', 'id');
+        return $this->belongsTo(sala::class, 'sala_id', 'id');
     }
 
     public function professor(){
-        return $this->belongsTo(Usuario::class, 'professor_id', 'id');
+        return $this->belongsTo(usuario::class, 'professor_id', 'id');
     }
 }

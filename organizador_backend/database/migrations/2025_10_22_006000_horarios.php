@@ -12,7 +12,7 @@ return new class extends Migration{
         Schema::create('horarios', function (Blueprint $table) {
             $table->id();
             $table->foreignId('turma_id')->constrained('turma')->onDelete('cascade');
-            $table->foreignId('posicaoSemana_id')->constrained('posicaoSemana')->onDelete('cascade');
+            $table->foreignId('posicaoSemana_id')->nullable()->constrained('posicaoSemana')->onDelete('cascade');
             $table->foreignId('aula_id')->constrained('aula')->onDelete('cascade');
             $table->foreignId('sala_id')->constrained('sala')->onDelete('cascade');
             $table->foreignId('professor_id')->constrained('usuario')->onDelete('cascade');

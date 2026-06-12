@@ -11,11 +11,11 @@ class turma extends Model{
     protected $table = 'turma';
 
     protected $fillable = [
-        'turmaRepresentante',
+        'nomeTurma',
         'qtdAlunos',
     ];
 
     public function aulas(){
-        return $this->hasMany(turma::class, 'turmaRepresentante', 'turmaRepresentante');
+        return $this->hasMany(turma::class, 'nomeTurma', 'nomeTurma');
     }
 }

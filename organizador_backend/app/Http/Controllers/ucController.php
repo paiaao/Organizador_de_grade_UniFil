@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\uc;
 
-class UcController extends Controller{
+class ucController extends Controller{
     /**
      * Display a listing of the resource.
      */
     public function index(){
-        $ucs = Uc::with(['aula'])->get();
+        $ucs = Uc::with(['aulas'])->get();
         return response()->json($ucs, 200);
     }
 
@@ -37,7 +37,7 @@ class UcController extends Controller{
      * Display the specified resource.
      */
     public function show($id){
-        $uc = Uc::with(['aula'])->findOrFail($id);
+        $uc = Uc::with(['aulas'])->findOrFail($id);
         return response()->json($uc, 200);
     }
 

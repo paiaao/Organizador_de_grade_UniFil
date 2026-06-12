@@ -1,101 +1,117 @@
 <template>
-  <div class="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-[#ff9421] to-[#ffbe78]">
-    <div class="absolute top-1 w-full flex justify-center">
-      <img src="/logo-unifil.png" alt="UniFil" class="w-80 md:w-96 lg:w-[800px] mx-auto" />
+  <div class="flex h-screen">
+    <div class="hidden lg:flex lg:w-2/5 bg-gradient-to-br from-[#ff9421] to-[#c96a00] flex-col items-center justify-center p-12">
+      <img src="/logo-unifil.png" alt="UniFil" class="w-full object-contain mb-10" />
+      <h2 class="text-white text-2xl font-bold text-center mb-3">Organizador de Grade</h2>
+      <p class="text-orange-100 text-center text-sm leading-relaxed max-w-xs">
+        Crie sua conta e gerencie seus horários acadêmicos
+      </p>
     </div>
 
-    <div class="bg-[#ffeccf] w-90 rounded-2xl shadow-md p-10 flex flex-col items-center relative transition-all duration-300">
-      <p class="text-center tracking-[7px] text-[#545252] leading-relaxed mb-2 font-black">
-        Cadastro
-      </p>
-
-      <div class="relative flex flex-col items-center w-full space-y-1">
-        <div class="w-full">
-          <label class="block text-[#545252] font-medium mb-1 text-sm">
-            Nome
-          </label>
-          <div class="border-b border-[#545252] pb-1 flex items-center">
-            <input type="text" placeholder="Insira o seu nome aqui" v-model="formData.nome" class="w-full bg-transparent outline-none text-[#545252] placeholder-[#a0a0a0] text-base"/>
-            <img src="/pessoa.png" alt="Pessoa" class="w-6 h-6 ml-2" />
-          </div>
+    <div class="flex-1 flex flex-col items-center justify-center bg-white px-8 overflow-y-auto py-8">
+      <div class="w-full max-w-sm">
+        <div class="lg:hidden mb-6 flex justify-center">
+          <img src="/logo-unifil.png" alt="UniFil" class="w-44 object-contain" />
         </div>
 
-        <div class="w-full">
-          <label class="block text-[#545252] font-medium mb-1 text-sm">
-            Curso
-          </label>
-          <div class="border-b border-[#545252] pb-1 flex items-center">
-            <select v-model="formData.curso" class="w-full bg-transparent outline-none text-[#545252] text-base">
+        <h1 class="text-2xl font-bold text-stone-800 mb-1">Criar conta</h1>
+        <p class="text-stone-500 text-sm mb-6">Preencha os dados para se cadastrar</p>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1.5">Nome completo</label>
+            <input
+              type="text"
+              placeholder="Insira seu nome"
+              v-model="formData.nome"
+              class="w-full border border-stone-300 rounded-lg px-4 py-3 text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1.5">Curso</label>
+            <select
+              v-model="formData.curso"
+              class="w-full border border-stone-300 rounded-lg px-4 py-3 text-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition bg-white"
+            >
               <option value="">Selecione seu curso</option>
               <option value="Engenharia de Software">Engenharia de Software</option>
               <option value="Ciências da Computação">Ciências da Computação</option>
             </select>
-            <img src="/livro.png" alt="Livro" class="w-6 h-6 ml-2" />
           </div>
-        </div>
 
-        <div class="w-full">
-          <label class="block text-[#545252] font-medium mb-1 text-sm">
-            Turma
-          </label>
-          <div class="border-b border-[#545252] pb-1 flex items-center">
-            <select v-model="formData.turma_id" class="w-full bg-transparent outline-none text-[#545252] text-base">
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1.5">Turma</label>
+            <select
+              v-model="formData.turma_id"
+              class="w-full border border-stone-300 rounded-lg px-4 py-3 text-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition bg-white"
+            >
               <option value="">Selecione sua turma</option>
               <option v-for="turma in turmas" :key="turma.id" :value="turma.id">
-                {{ turma.turmaRepresentante }}
+                {{ turma.nomeTurma }}
               </option>
             </select>
-            <img src="/livro.png" alt="Livro" class="w-6 h-6 ml-2" />
+            <p v-if="carregandoTurmas" class="text-xs text-blue-500 mt-1">Carregando turmas...</p>
+            <p v-if="erroTurmas" class="text-xs text-red-500 mt-1">{{ erroTurmas }}</p>
           </div>
-          <div v-if="carregandoTurmas" class="text-xs text-blue-500">Carregando turmas...</div>
-          <div v-if="erroTurmas" class="text-xs text-red-500">{{ erroTurmas }}</div>
+
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1.5">Matrícula</label>
+            <input
+              type="text"
+              placeholder="Insira sua matrícula"
+              v-model="formData.matricula"
+              class="w-full border border-stone-300 rounded-lg px-4 py-3 text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1.5">Senha</label>
+            <input
+              type="password"
+              placeholder="Mínimo 6 caracteres"
+              v-model="formData.senhaHash"
+              class="w-full border border-stone-300 rounded-lg px-4 py-3 text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1.5">Confirmar senha</label>
+            <input
+              type="password"
+              placeholder="Repita sua senha"
+              v-model="formData.senhaHash_confirmation"
+              @keyup.enter="submitForm"
+              class="w-full border border-stone-300 rounded-lg px-4 py-3 text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
+            />
+          </div>
         </div>
 
-        <div class="w-full">
-          <label class="block text-[#545252] font-medium mb-1 text-sm">Matrícula</label>
-          <div class="border-b border-[#545252] pb-1 flex items-center">
-            <input type="text" placeholder="Insira a sua matrícula aqui" v-model="formData.matricula" class="w-full bg-transparent outline-none text-[#545252] placeholder-[#a0a0a0] text-base"/>
-            <img src="/lapis.png" alt="Lápis" class="w-5 h-5 ml-2" />
-          </div>
+        <button
+          @click="submitForm"
+          :disabled="loading"
+          class="mt-6 w-full bg-[#ff9421] hover:bg-[#e06800] text-white font-semibold rounded-lg py-3 transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {{ loading ? 'Cadastrando...' : 'Criar conta' }}
+        </button>
+
+        <div
+          v-if="mensagem.texto"
+          :class="['mt-4 py-2.5 px-4 rounded-lg text-sm text-center transition-all duration-300',
+            mensagem.tipo === 'erro' ? 'bg-red-50 text-red-600 border border-red-200' :
+            mensagem.tipo === 'sucesso' ? 'bg-green-50 text-green-600 border border-green-200' :
+            'bg-blue-50 text-blue-600 border border-blue-200']"
+        >
+          {{ mensagem.texto }}
         </div>
 
-        <div class="w-full">
-          <label class="block text-[#545252] font-medium mb-1 text-sm">
-            Senha
-          </label>
-          <div class="border-b border-[#545252] pb-1 flex items-center">
-            <input type="password" placeholder="Insira a sua senha aqui" v-model="formData.senhaHash" class="w-full bg-transparent outline-none text-[#545252] placeholder-[#a0a0a0] text-base"/>
-            <img src="/olhosenha.png" alt="Mostrar senha" class="w-6 h-6 ml-2" />
-          </div>
-        </div>
-
-        <div class="w-full">
-          <label class="block text-[#545252] font-medium mb-1 text-sm">
-            Confirmação de Senha
-          </label>
-          <div class="border-b border-[#545252] pb-1 flex items-center">
-            <input type="password" placeholder="Insira a sua senha aqui" v-model="formData.senhaHash_confirmation" class="w-full bg-transparent outline-none text-[#545252] placeholder-[#a0a0a0] text-base"/>
-            <img src="/olhosenha.png" alt="Mostrar senha" class="w-6 h-6 ml-2" />
-          </div>
-        </div>
-      </div>
-
-      <button 
-        @click="submitForm"
-        :disabled="loading"
-        class="bg-[#ffac26] tracking-[7px] w-60 h-12 text-white font-semibold text-lg rounded-full py-2 px-10 shadow-md hover:shadow-lg transition-all mt-4 disabled:opacity-50"
-      >
-        {{ loading ? 'Cadastrando...' : 'Enviar' }}
-      </button>
-
-      <div v-if="mensagem.texto" 
-           :class="[
-             'w-full text-center py-2 px-4 rounded-lg mt-3 text-xs transition-all duration-300',
-             mensagem.tipo === 'erro' ? 'bg-red-100 text-red-700 border border-red-300' : 
-             mensagem.tipo === 'sucesso' ? 'bg-green-100 text-green-700 border border-green-300' : 
-             'bg-blue-100 text-blue-700 border border-blue-300'
-           ]">
-        {{ mensagem.texto }}
+        <p class="mt-6 text-center text-sm text-stone-500">
+          Já tem conta?
+          <span
+            @click="$router.push('/loginAluno')"
+            class="text-[#ff9421] font-medium cursor-pointer hover:underline"
+          >Fazer login</span>
+        </p>
       </div>
     </div>
   </div>
@@ -113,7 +129,7 @@ const turmas = ref([]);
 
 const mensagem = ref({
   texto: '',
-  tipo: '' // 'erro', 'sucesso'
+  tipo: ''
 });
 
 const api = inject('api');
@@ -141,10 +157,10 @@ const mostrarMensagem = (texto, tipo = 'erro') => {
 const carregarTurmas = async () => {
   carregandoTurmas.value = true;
   erroTurmas.value = '';
-  
+
   try {
     const response = await api.get('/api/turmas');
-    
+
     if (response.data && Array.isArray(response.data)) {
       turmas.value = response.data;
     } else {
@@ -152,7 +168,7 @@ const carregarTurmas = async () => {
     }
   } catch (error) {
     if (error.response) {
-      erroTurmas.value = `Erro ao carregar turmas`;
+      erroTurmas.value = 'Erro ao carregar turmas';
     } else if (error.request) {
       erroTurmas.value = 'Sem resposta do servidor';
     } else {
@@ -165,9 +181,9 @@ const carregarTurmas = async () => {
 
 const submitForm = async () => {
   if (loading.value) return;
-  
+
   mensagem.value = { texto: '', tipo: '' };
-  
+
   if (!formData.nome || !formData.curso || !formData.matricula || !formData.senhaHash) {
     mostrarMensagem('Preencha todos os campos obrigatórios', 'erro');
     return;
@@ -192,7 +208,7 @@ const submitForm = async () => {
     };
 
     const response = await api.post('/api/usuarios', dataToSend);
-    
+
     if (response.status === 201) {
       mostrarMensagem('Cadastro realizado com sucesso!', 'sucesso');
       setTimeout(() => {
@@ -217,14 +233,3 @@ onMounted(() => {
   carregarTurmas();
 });
 </script>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

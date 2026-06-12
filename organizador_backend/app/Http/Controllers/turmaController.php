@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\turma;
 
-class TurmaController extends Controller{
+class turmaController extends Controller{
     /**
      * Display a listing of the resource.
      */
@@ -21,7 +21,7 @@ class TurmaController extends Controller{
      */
     public function store(Request $request){
         $validated = $request->validate([
-            'turmaRepresentante' => 'required|string|max:255',
+            'nomeTurma' => 'required|string|max:255',
             'qtdAlunos' => 'required|integer|min:1',
         ]);
 
@@ -49,7 +49,7 @@ class TurmaController extends Controller{
         $turma = Turma::findOrFail($id);
 
         $validated = $request->validate([
-            'turmaRepresentante' => 'sometimes|required|string|max:255',
+            'nomeTurma' => 'sometimes|required|string|max:255',
             'qtdAlunos' => 'sometimes|required|integer|min:1',
         ]);
 
@@ -76,7 +76,7 @@ class TurmaController extends Controller{
      * buscar turma por representante
      */
     public function porRepresentante($representante){
-        $turma = Turma::where('turmaRepresentante', 'like', "%{$representante}%")
+        $turma = Turma::where('nomeTurma', 'like', "%{$representante}%")
             ->get();
         
         return response()->json($turma, 200);
